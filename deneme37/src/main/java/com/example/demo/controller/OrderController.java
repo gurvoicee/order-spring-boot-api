@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.assmbler.OrderAssembler;
 import com.example.demo.enums.Status;
+import com.example.demo.exception.OrderNotFoundException;
 import com.example.demo.model.Order;
 import com.example.demo.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class OrderController {
     OrderAssembler assembler;
     @GetMapping("/{id}")
     public EntityModel<Order> getOne(@PathVariable Long id){
-        Order order = (Order) repository.findById(id).orElseThrow(()->new RuntimeException());
+        Order order = (Order) repository.findById(id).orElseThrow(()->new OrderNotFoundException(id));
         return assembler.toModel(order);
     }
     @GetMapping
@@ -41,7 +42,7 @@ public class OrderController {
     }
     @PutMapping("/{id}/complete")
     public ResponseEntity<EntityModel<Order>> complete(@PathVariable Long id){
-        Order order = repository.findById(id).orElseThrow(()->new RuntimeException());
+        Order order = repository.findById(id).orElseThrow(()->new OrderNotFoundException(id));
         if(order.getStatus()==Status.IN_PROGRESS){
             order.setStatus(Status.COMPLETED);
         }
@@ -50,7 +51,7 @@ public class OrderController {
     }
     @DeleteMapping("/{id}/cancel")
     public ResponseEntity<Void> cancel(@PathVariable Long id){
-        Order order = repository.findById(id).orElseThrow(()->new RuntimeException());
+        Order order = repository.findById(id).orElseThrow(()->new OrderNotFoundException(id));
         if(order.getStatus()==Status.IN_PROGRESS){
             order.setStatus(Status.CANCELLED);
         }
