@@ -13,6 +13,13 @@ public class Order {
     private String description;
     private Status status;
 
+    public Order(String description) {
+        this.setDescription(description);
+    }
+    public Order(){
+
+    }
+
     public String getDescription() {
         return description;
     }
